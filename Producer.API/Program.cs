@@ -1,5 +1,7 @@
 
 
+using Contract.Message;
+using MassTransit;
 using Producer.API.DIs;
 using Producer.API.Services;
 
@@ -28,8 +30,17 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.MapGrpcService<MessageService>();  // Register your gRPC service here
-app.MapGet("/", () => "Use a gRPC client to communicate with gRPC endpoints.");
+app.MapPost("/send-message", async (IPublishEndpoint publishEndpoint, string text) =>
+{
+    var message = new MessageContract
+    {
+        Text = text
+    };
 
+    await publishEndpoint.Publish(message); // Publish message to RabbitMQ
+
+    return Results.Ok($"Message '{text}' sent to RabbitMQ");
+});
 app.MapControllers();
 
 app.Run();
