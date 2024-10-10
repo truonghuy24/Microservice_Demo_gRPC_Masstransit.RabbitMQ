@@ -1,0 +1,15 @@
+syntax = "proto3";
+option csharp_namespace = "Producer.API.Protos";
+
+
+service Messages{
+  rpc SendMessage (MessageRequest) returns (MessageReply);
+}
+
+message MessageRequest {
+  string text = 1;
+}
+
+message MessageReply {
+  string confirmation = 1;
+}
